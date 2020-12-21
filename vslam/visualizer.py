@@ -293,4 +293,4 @@ class vtkTimerCallback(object):
             render_window.Render()
 
             self.timer_count += 1
-
+        logging.debug("Finished Visualizing")
