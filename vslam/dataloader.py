@@ -1,7 +1,7 @@
 import os, sys
+from abc import ABC
 
-
-class DataLoader(object):
+class DataLoader(ABC):
 
     """Abstract base class for data loaders for different datasets
         1. KITTI
@@ -14,6 +14,7 @@ class DataLoader(object):
 
         self.files = []
 
+    @abstractmethod
     def __len__(self) -> int:
         """Returns length of the data stream
 
@@ -22,6 +23,7 @@ class DataLoader(object):
         """
         return len(self.files)
 
+    @abstractmethod
     def __getitem__(self, index: int) -> dict:
         """ Returns dictionary containing data at index
 
@@ -32,6 +34,7 @@ class DataLoader(object):
         """
         return self.files[index]
 
+    @abstractmethod
     def getCameraParameters(self):
         """ Returns camera parameters as a dictionary
         """
