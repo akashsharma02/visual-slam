@@ -7,7 +7,7 @@ import vtk
 import numpy as np
 
 
-def createCameraPolyData(R: np.ndarray, t: np.ndarray) -> vtk.vtkPolyData:
+def createCameraPolyData(R: np.ndarray, t: np.ndarray, only_polys=False) -> vtk.vtkPolyData:
     """Create polygon wireframe for camera given a camera pose
 
     Args:
@@ -29,7 +29,8 @@ def createCameraPolyData(R: np.ndarray, t: np.ndarray) -> vtk.vtkPolyData:
                              [ 1, 0.5, 1.5],
                              [ 1.2, 0, 1.5]])
 
-    camera_points = (0.05*camera_points - t).dot(R)
+    # camera_points = (0.05*camera_points - t).dot(R)
+    camera_points = R.dot(camera_points.T).T + t
 
     vpoints = vtk.vtkPoints()
     vpoints.SetNumberOfPoints(camera_points.shape[0])
@@ -39,6 +40,72 @@ def createCameraPolyData(R: np.ndarray, t: np.ndarray) -> vtk.vtkPolyData:
     vpoly = vtk.vtkPolyData()
     vpoly.SetPoints(vpoints)
 
+    poly_cells = vtk.vtkCellArray()
+
+    if not only_polys:
+        line_cells = vtk.vtkCellArray()
+        
+        line_cells.InsertNextCell( 5 );
+        line_cells.InsertCellPoint( 1 );
+        line_cells.InsertCellPoint( 2 );
+        line_cells.InsertCellPoint( 3 );
+        line_cells.InsertCellPoint( 4 );
+        line_cells.InsertCellPoint( 1 );
+
+        line_cells.InsertNextCell( 3 );
+        line_cells.InsertCellPoint( 1 );
+        line_cells.InsertCellPoint( 0 );
+        line_cells.InsertCellPoint( 2 );
+
+        line_cells.InsertNextCell( 3 );
+        line_cells.InsertCellPoint( 3 );
+        line_cells.InsertCellPoint( 0 );
+        line_cells.InsertCellPoint( 4 );
+
+        # x-axis indicator
+        line_cells.InsertNextCell( 3 );
+        line_cells.InsertCellPoint( 8 );
+        line_cells.InsertCellPoint( 10 );
+        line_cells.InsertCellPoint( 9 );
+        vpoly.SetLines(line_cells)
+    else:
+        # left
+        poly_cells.InsertNextCell( 3 );
+        poly_cells.InsertCellPoint( 0 );
+        poly_cells.InsertCellPoint( 1 );
+        poly_cells.InsertCellPoint( 4 );
+
+        # right
+        poly_cells.InsertNextCell( 3 );
+        poly_cells.InsertCellPoint( 0 );
+        poly_cells.InsertCellPoint( 3 );
+        poly_cells.InsertCellPoint( 2 );
+
+        # top
+        poly_cells.InsertNextCell( 3 );
+        poly_cells.InsertCellPoint( 0 );
+        poly_cells.InsertCellPoint( 4 );
+        poly_cells.InsertCellPoint( 3 );
+
+        # bottom
+        poly_cells.InsertNextCell( 3 );
+        poly_cells.InsertCellPoint( 0 );
+        poly_cells.InsertCellPoint( 2 );
+        poly_cells.InsertCellPoint( 1 );
+
+        # x-axis indicator
+        poly_cells.InsertNextCell( 3 );
+        poly_cells.InsertCellPoint( 8 );
+        poly_cells.InsertCellPoint( 10 );
+        poly_cells.InsertCellPoint( 9 );
+
+    # up vector (y-axis)
+    poly_cells.InsertNextCell( 3 );
+    poly_cells.InsertCellPoint( 5 );
+    poly_cells.InsertCellPoint( 6 );
+    poly_cells.InsertCellPoint( 7 );
+
+    vpoly.SetPolys(poly_cells)
     return vpoly
 
 def createCameraActor(R: np.ndarray, t: np.ndarray) -> vtk.vtkActor:
@@ -80,10 +147,18 @@ def createPointcloudPolyData(points: np.ndarray, colors: np.ndarray=None) ->  vt
         vcolors = vtk.vtkUnsignedCharArray()
         vcolors.SetNumberOfComponents(3)
         vcolors.SetName("Colors")
-        vcolors.SetNumberofTuples(points.shape[0])
+        vcolors.SetNumberOfTuples(points.shape[0])
         for i in range(points.shape[0]):
             vcolors.SetTuple3(i, colors[i, 0], colors[i, 1], colors[i, 2])
-        vpoly.GerPointData().SetScalars(vcolors)
+        vpoly.GetPointData().SetScalars(vcolors)
+    
+    vcells = vtk.vtkCellArray()
+    
+    for i in range(points.shape[0]):
+        vcells.InsertNextCell(1)
+        vcells.InsertCellPoint(i)
+        
+    vpoly.SetVerts(vcells)
 
     return vpoly
 
