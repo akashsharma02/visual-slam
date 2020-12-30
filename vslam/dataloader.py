@@ -1,4 +1,5 @@
 import os, sys
+import pathlib
 from abc import ABC
 
 class DataLoader(ABC):
@@ -9,10 +10,11 @@ class DataLoader(ABC):
         3. EUROC
     """
     def __init__(self, data_path: str, cam_param_path: str) -> None:
-        self.data_path = data_path
+        self.data_path = pathlib.Path(data_path)
         self.cam_param_path = cam_param_path
 
         self.files = []
+
 
     @abstractmethod
     def __len__(self) -> int:
