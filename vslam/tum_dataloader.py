@@ -2,8 +2,11 @@ import numpy as np
 import glob
 import pykitti
 import cv2
+import os
 
-class TumDataLoader(DataLoader):
+from vslam.dataloader import Dataloader
+
+class TumDataloader(Dataloader):
     """
     Data loader for TUM dataset
     """
@@ -22,24 +25,24 @@ class TumDataLoader(DataLoader):
         rgb_files = self._readFileList(self.data_path / "rgb.txt")
         depth_files = self._readFileList(self.data_path / "depth.txt")
 
-        matches = self._associate(rgb_files, depth_files, 0.0, 0.02)
+        self._matches = self._associate(rgb_files, depth_files, 0.0, 0.02)
 
 
     def __len__(self) -> int:
         """
         Returns length of sequence
         """
-        return len(self.matches)
+        return len(self._matches)
 
 
     def __getitem__(self, index: int) -> dict:
         """
         Return a dictionary of relevant data
         """
-        rgb_stamp, rgb_data, depth_stamp, depth_data = self.matches[index]
-        rgb = cv2.imread(rgb_data)
-        depth = cv2.imread(depth_data)
-
+        (rgb_stamp, rgb_data), (depth_stamp, depth_data) = self._matches[index]
+        rgb = cv2.imread(str(self.data_path / rgb_data))
+        depth = cv2.imread(str(self.data_path / depth_data))
+        print(rgb_data, depth_data)
         data_dict = {
             "rgb": rgb,
             "depth": depth,
@@ -58,20 +61,20 @@ class TumDataLoader(DataLoader):
         """
         camera = dict()
         if self.sequence == 1:
-            camera.intrinsic_matrix = [[517.3, 0    , 318.6],
-                                       [    0, 516.5, 255.3],
-                                       [    0,     0,     1]]
-            camera.dist_coefficients = [0.2624,	-0.9531, -0.0054, 0.0026, 1.1633]
+            camera['intrinsic_matrix'] = np.array([[517.3, 0    , 318.6],
+                                                   [    0, 516.5, 255.3],
+                                                   [    0,     0,     1]])
+            camera['dist_coefficients'] = np.array([0.2624,	-0.9531, -0.0054, 0.0026, 1.1633])
         elif self.sequence == 2:
-            camera.intrinsic_matrix = [[520.9,     0, 325.1],
-                                       [    0, 521.0, 249.7],
-                                       [    0,     0,     1]]
-            camera.dist_coefficients = [0.2312,	-0.7849, -0.0033, -0.0001, 0.9172]
+            camera['intrinsic_matrix'] = np.array([[520.9,     0, 325.1],
+                                                   [    0, 521.0, 249.7],
+                                                   [    0,     0,     1]])
+            camera['dist_coefficients'] = np.array([0.2312,	-0.7849, -0.0033, -0.0001, 0.9172])
         elif self.sequence == 3:
-            camera.intrinsic_matrix = [[535.4,     0, 320.1],
-                                       [    0, 539.2, 247.6],
-                                       [    0,     0,     1]]
-            camera.dist_coefficients = np.zeros(5)
+            camera['intrinsic_matrix'] = np.array([[535.4,     0, 320.1],
+                                                   [    0, 539.2, 247.6],
+                                                   [    0,     0,     1]])
+            camera['dist_coefficients'] = np.zeros(5)
         else:
             assert False, "Invalid sequence number"
         return camera
@@ -90,6 +93,7 @@ class TumDataLoader(DataLoader):
             dict: dictionary of (stamp,data) tuples
 
         """
+        print(os.getcwd())
         file = open(filename)
         data = file.read()
         lines = data.replace(","," ").replace("\t"," ").split("\n")
@@ -126,7 +130,7 @@ class TumDataLoader(DataLoader):
             if a in first_keys and b in second_keys:
                 first_keys.remove(a)
                 second_keys.remove(b)
-                matches.append((a, b))
+                matches.append(((a, first_list[a][0]), (b, second_list[b][0])))
 
         matches.sort()
         return matches

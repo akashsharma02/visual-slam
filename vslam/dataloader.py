@@ -1,8 +1,8 @@
 import os, sys
 import pathlib
-from abc import ABC
+from abc import ABC, abstractmethod
 
-class DataLoader(ABC):
+class Dataloader(ABC):
 
     """Abstract base class for data loaders for different datasets
         1. KITTI
@@ -11,6 +11,7 @@ class DataLoader(ABC):
     """
     def __init__(self, data_path: str, cam_param_path: str) -> None:
         self.data_path = pathlib.Path(data_path)
+        assert self.data_path.exists()
         self.cam_param_path = cam_param_path
 
         self.files = []
