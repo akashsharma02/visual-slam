@@ -44,7 +44,7 @@ def createCameraPolyData(R: np.ndarray, t: np.ndarray, only_polys=False) -> vtk.
 
     if not only_polys:
         line_cells = vtk.vtkCellArray()
-        
+
         line_cells.InsertNextCell( 5 );
         line_cells.InsertCellPoint( 1 );
         line_cells.InsertCellPoint( 2 );
@@ -151,13 +151,13 @@ def createPointcloudPolyData(points: np.ndarray, colors: np.ndarray=None) ->  vt
         for i in range(points.shape[0]):
             vcolors.SetTuple3(i, colors[i, 0], colors[i, 1], colors[i, 2])
         vpoly.GetPointData().SetScalars(vcolors)
-    
+
     vcells = vtk.vtkCellArray()
-    
+
     for i in range(points.shape[0]):
         vcells.InsertNextCell(1)
         vcells.InsertCellPoint(i)
-        
+
     vpoly.SetVerts(vcells)
 
     return vpoly
@@ -216,6 +216,10 @@ class InteractiveViz(Process):
         renderer.SetBackground(0, 0, 0)
 
         camera = vtk.vtkCamera()
+        camera.SetPosition((1, 0, -3));
+        camera.SetViewUp((0, -1, 0));
+        camera.SetFocalPoint((0, 0, 1));
+        renderer.SetActiveCamera(camera)
 
         render_window = vtk.vtkRenderWindow()
         render_window.SetWindowName("Visual SLAM visualizer")
