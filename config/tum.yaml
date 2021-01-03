@@ -1,0 +1,7 @@
+# YAML configuration for TUM Dataset freiburg1 XYZ test
+dataset:
+    type: "TumDataloader"
+    args:
+        path: "/home/akashsharma/Documents/datasets/tum/rgbd_dataset_freiburg1_xyz/"
+        sequence: "1"
+save_dir: "logs/"

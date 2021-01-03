@@ -43,7 +43,7 @@ class TestTumDataloader(object):
 
         tum = TumDataloader(TestTumDataloader.path, TestTumDataloader.sequence)
         assert tum.sequence == 1
-        assert len(tum._matches) <= len(tum._readFileList(tum.data_path / "rgb.txt"))
+        assert len(tum._matches) <= len(tum._readFileList(tum.path / "rgb.txt"))
 
     def test_len(self):
         """Docstring for test_len.

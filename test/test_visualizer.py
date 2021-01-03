@@ -29,4 +29,5 @@ def test_visualizer_straight_line(caplog):
         queue.put([point_cloud, pose])
     viz = InteractiveViz(queue,os.getcwd())
     viz.start()
+
     assert "Finished Visualizing" not in caplog.text
