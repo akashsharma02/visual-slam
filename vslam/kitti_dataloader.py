@@ -6,15 +6,15 @@ class KittiDataloader(Dataloader):
     """
     Data loader for KITTI dataset
     """
-    def __init__(self, data_path: str, sequence: str) -> None:
+    def __init__(self, path: str, sequence: str) -> None:
         """
         Args:
-            data_path: Path to KITTI Odometry dataset
+            path: Path to KITTI Odometry dataset
             sequence: sequence number
         """
-        super().__init__(data_path, data_path)
+        super().__init__(path, path)
         self.sequence = sequence
-        self._kitti = pykitti.odometry(data_path, sequence)
+        self._kitti = pykitti.odometry(path, sequence)
         self.camera_params = self.getCameraParameters()
 
     def __len__(self) -> int:

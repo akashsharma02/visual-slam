@@ -10,20 +10,20 @@ class TumDataloader(Dataloader):
     """
     Data loader for TUM dataset
     """
-    def __init__(self, data_path: str, sequence: str) -> None:
+    def __init__(self, path: str, sequence: str) -> None:
         """
         Args:
-            data_path: Path to TUM dataset
+            path: Path to TUM dataset
             sequence: sequence number (1, 2, or 3) Camera intrinsics are different for each
         """
-        super().__init__(data_path, data_path)
+        super().__init__(path, path)
 
         self.sequence = int(sequence)
         assert self.sequence in [1, 2, 3], "Invalid sequence for TUM dataset, can be 1, 2, or 3"
         self.camera_params = self.getCameraParameters()
 
-        rgb_files = self._readFileList(self.data_path / "rgb.txt")
-        depth_files = self._readFileList(self.data_path / "depth.txt")
+        rgb_files = self._readFileList(self.path / "rgb.txt")
+        depth_files = self._readFileList(self.path / "depth.txt")
 
         self._matches = self._associate(rgb_files, depth_files, 0.0, 0.02)
 
@@ -40,9 +40,8 @@ class TumDataloader(Dataloader):
         Return a dictionary of relevant data
         """
         (rgb_stamp, rgb_data), (depth_stamp, depth_data) = self._matches[index]
-        rgb = cv2.imread(str(self.data_path / rgb_data))
-        depth = cv2.imread(str(self.data_path / depth_data))
-        print(rgb_data, depth_data)
+        rgb = cv2.imread(str(self.path / rgb_data))
+        depth = cv2.imread(str(self.path / depth_data))
         data_dict = {
             "rgb": rgb,
             "depth": depth,

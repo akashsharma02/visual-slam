@@ -1,0 +1,6 @@
+dataset:
+  args:
+    path: /home/akashsharma/Documents/datasets/tum/rgbd_dataset_freiburg1_xyz/
+    sequence: '1'
+  type: TumDataloader
+save_dir: logs/
