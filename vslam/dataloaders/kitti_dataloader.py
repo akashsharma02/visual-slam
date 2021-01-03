@@ -1,4 +1,5 @@
 import numpy as np
+import cv2
 import pykitti
 
 from .dataloader import Dataloader
@@ -22,16 +23,18 @@ class KittiDataloader(Dataloader):
         """
         Returns length of sequence
         """
-        return len(self._kitti.poses)
+        return len(self._kitti.cam2_files)
 
     def __getitem__(self, index: int) -> dict:
         """
         Return a dictionary of relevant data
         """
-        image = self._kitti.get_cam2(index)
+        img = self._kitti.get_cam2(index)
+        img_np = np.array(img)
+        img_cv2 = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
         data_dict = {
-            "image": image,
-            "cam_params": self.camera
+            "rgb": img_cv2,
+            "cam_params": self.camera_params
         }
         return data_dict
 
@@ -43,7 +46,7 @@ class KittiDataloader(Dataloader):
             dist_coefficients = 1x5 numpy ndarray of distortion coefficients
         """
         camera = dict()
-        camera.intrinsic_matrix = self._kitti.calib.K_cam2
+        camera["intrinsic_matrix"] = self._kitti.calib.K_cam2
         # TODO(Akash): Check for the distortion coefficients
-        camera.dist_coefficients = np.zeros(5)
+        camera["dist_coefficients"] = np.zeros(5)
         return camera

@@ -1,6 +1,6 @@
 dataset:
   args:
-    path: /home/akashsharma/Documents/datasets/tum/rgbd_dataset_freiburg1_xyz/
-    sequence: '1'
-  type: TumDataloader
+    path: /home/akashsharma/Documents/datasets/kitti/odometry/
+    sequence: '00'
+  type: KittiDataloader
 save_dir: logs/

@@ -1,9 +1,11 @@
 import numpy as np
 import argparse
 import tqdm
+import cv2
 
 from vslam.parse_config import ConfigParser
-import vslam.dataloaders as loader
+from vslam import visualizer as viz
+from vslam import dataloaders
 
 def main(config):
     """TODO: Docstring for main.
@@ -13,10 +15,15 @@ def main(config):
 
     """
     #TODO: Logger
-    dataloader = config.init_obj('dataset', loader)
+    dataloader = config.init_obj('dataset', dataloaders)
 
-    for i in tqdm.tqdm(range(len(dataloader)), desc=config['dataset']['type']):
+    prev_data = dataloader[0]
+    print(len(dataloader))
+    for i in tqdm.tqdm(range(1, len(dataloader)), desc=config['dataset']['type']):
         data = dataloader[i]
+
+        cv2.imshow("rgb image", data["rgb"])
+        cv2.waitKey(1)
 
 
 if __name__ == "__main__":
