@@ -1,7 +1,8 @@
 import os, sys
+import pathlib
+from abc import ABC, abstractmethod
 
-
-class DataLoader(object):
+class Dataloader(ABC):
 
     """Abstract base class for data loaders for different datasets
         1. KITTI
@@ -9,11 +10,14 @@ class DataLoader(object):
         3. EUROC
     """
     def __init__(self, data_path: str, cam_param_path: str) -> None:
-        self.data_path = data_path
+        self.data_path = pathlib.Path(data_path)
+        assert self.data_path.exists()
         self.cam_param_path = cam_param_path
 
         self.files = []
 
+
+    @abstractmethod
     def __len__(self) -> int:
         """Returns length of the data stream
 
@@ -22,6 +26,7 @@ class DataLoader(object):
         """
         return len(self.files)
 
+    @abstractmethod
     def __getitem__(self, index: int) -> dict:
         """ Returns dictionary containing data at index
 
@@ -32,6 +37,7 @@ class DataLoader(object):
         """
         return self.files[index]
 
+    @abstractmethod
     def getCameraParameters(self):
         """ Returns camera parameters as a dictionary
         """
