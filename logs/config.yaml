@@ -4,3 +4,8 @@ dataset:
     sequence: '00'
   type: KittiDataloader
 save_dir: logs/
+tracker:
+  args:
+    max_corners: 1000
+    nms_radius: 2
+    quality_level: 0.2
