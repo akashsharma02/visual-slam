@@ -2,8 +2,9 @@ import pytest
 import os, sys
 import numpy as np
 import cv2
-from vslam.kitti_dataloader import KittiDataloader
-from vslam.tum_dataloader import TumDataloader
+
+from vslam import dataloaders as loader
+
 
 
 class TestKittiDataloader(object):
@@ -36,12 +37,12 @@ class TestTumDataloader(object):
 
         """
         with pytest.raises(AssertionError):
-            tum = TumDataloader("/home/akashsharma/Documents/datasets/tum/rgbd_dataset_freiburg1_xyz/", "0")
+            tum = loader.TumDataloader("/home/akashsharma/Documents/datasets/tum/rgbd_dataset_freiburg1_xyz/", "0")
 
         with pytest.raises(AssertionError):
-            tum = TumDataloader("SomeRandomPath/path", "1")
+            tum = loader.TumDataloader("SomeRandomPath/path", "1")
 
-        tum = TumDataloader(TestTumDataloader.path, TestTumDataloader.sequence)
+        tum = loader.TumDataloader(TestTumDataloader.path, TestTumDataloader.sequence)
         assert tum.sequence == 1
         assert len(tum._matches) <= len(tum._readFileList(tum.path / "rgb.txt"))
 
@@ -52,7 +53,7 @@ class TestTumDataloader(object):
         :Returns:
 
         """
-        tum = TumDataloader(TestTumDataloader.path, TestTumDataloader.sequence)
+        tum = loader.TumDataloader(TestTumDataloader.path, TestTumDataloader.sequence)
         assert len(tum) == len(tum._matches)
 
     def test_get_item(self):
@@ -62,7 +63,7 @@ class TestTumDataloader(object):
         :Returns:
 
         """
-        tum = TumDataloader(TestTumDataloader.path, TestTumDataloader.sequence)
+        tum = loader.TumDataloader(TestTumDataloader.path, TestTumDataloader.sequence)
 
         for i in [0, len(tum)-1]:
             data_dict = tum[i]

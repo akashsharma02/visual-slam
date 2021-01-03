@@ -4,7 +4,7 @@ import pykitti
 import cv2
 import os
 
-from vslam.dataloader import Dataloader
+from .dataloader import Dataloader
 
 class TumDataloader(Dataloader):
     """

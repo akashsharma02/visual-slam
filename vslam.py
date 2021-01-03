@@ -2,9 +2,8 @@ import numpy as np
 import argparse
 import tqdm
 
-from parse_config import ConfigParser
-import loader_utils as loader
-
+from vslam.parse_config import ConfigParser
+import vslam.dataloaders as loader
 
 def main(config):
     """TODO: Docstring for main.

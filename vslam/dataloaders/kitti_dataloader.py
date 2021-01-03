@@ -1,6 +1,7 @@
 import numpy as np
 import pykitti
-from vslam.dataloader import Dataloader
+
+from .dataloader import Dataloader
 
 class KittiDataloader(Dataloader):
     """
