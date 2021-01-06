@@ -38,7 +38,7 @@ class Dataloader(ABC):
         return self.files[index]
 
     @abstractmethod
-    def getCameraParameters(self):
+    def getCameraParameters(self) -> dict:
         """ Returns camera parameters as a dictionary
         """
         pass

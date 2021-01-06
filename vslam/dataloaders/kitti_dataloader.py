@@ -23,7 +23,7 @@ class KittiDataloader(Dataloader):
         """
         Returns length of sequence
         """
-        return len(self._kitti.cam2_files)
+        return len(self._kitti)
 
     def __getitem__(self, index: int) -> dict:
         """
@@ -38,7 +38,7 @@ class KittiDataloader(Dataloader):
         }
         return data_dict
 
-    def getCameraParameters(self) -> dict():
+    def getCameraParameters(self) -> dict:
         """
         Returns:
             dict() containing:
@@ -46,7 +46,13 @@ class KittiDataloader(Dataloader):
             dist_coefficients = 1x5 numpy ndarray of distortion coefficients
         """
         camera = dict()
-        camera["intrinsic_matrix"] = self._kitti.calib.K_cam2
+        camera['width'] = 376
+        camera['height'] = 1241
+        camera['fx'] = self._kitti.calib.K_cam2[0][0]
+        camera['fy'] = self._kitti.calib.K_cam2[1][1]
+        camera['cx'] = self._kitti.calib.K_cam2[0][2]
+        camera['cy'] = self._kitti.calib.K_cam2[1][2]
+
         # TODO(Akash): Check for the distortion coefficients
         camera["dist_coefficients"] = np.zeros(5)
         return camera

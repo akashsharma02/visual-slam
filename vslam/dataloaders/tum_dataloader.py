@@ -6,6 +6,7 @@ import os
 
 from .dataloader import Dataloader
 
+
 class TumDataloader(Dataloader):
     """
     Data loader for TUM dataset
@@ -19,7 +20,9 @@ class TumDataloader(Dataloader):
         super().__init__(path, path)
 
         self.sequence = int(sequence)
-        assert self.sequence in [1, 2, 3], "Invalid sequence for TUM dataset, can be 1, 2, or 3"
+        assert self.sequence in [
+            1, 2, 3
+        ], "Invalid sequence for TUM dataset, can be 1, 2, or 3"
         self.camera_params = self.getCameraParameters()
 
         rgb_files = self._readFileList(self.path / "rgb.txt")
@@ -27,13 +30,11 @@ class TumDataloader(Dataloader):
 
         self._matches = self._associate(rgb_files, depth_files, 0.0, 0.02)
 
-
     def __len__(self) -> int:
         """
         Returns length of sequence
         """
         return len(self._matches)
-
 
     def __getitem__(self, index: int) -> dict:
         """
@@ -47,37 +48,41 @@ class TumDataloader(Dataloader):
             "depth": depth,
             "rgb_stamp": rgb_stamp,
             "depth_stamp": depth_stamp,
-            "cam_params": self.camera_params
         }
         return data_dict
 
-
-    def getCameraParameters(self) -> np.ndarray:
+    def getCameraParameters(self) -> dict:
         """
         Returns a 3 X 3 array of the intrinsics
         Returns:
             A ndarray of the rgb-left camera intrinsics
         """
         camera = dict()
+        camera['width'] = 640
+        camera['height'] = 480
         if self.sequence == 1:
-            camera['intrinsic_matrix'] = np.array([[517.3, 0    , 318.6],
-                                                   [    0, 516.5, 255.3],
-                                                   [    0,     0,     1]])
-            camera['dist_coefficients'] = np.array([0.2624,	-0.9531, -0.0054, 0.0026, 1.1633])
+            camera['fx'] = 517.3
+            camera['fy'] = 516.5
+            camera['cx'] = 318.6
+            camera['cy'] = 255.3
+            camera['dist_coefficients'] = np.array(
+                [0.2624, -0.9531, -0.0054, 0.0026, 1.1633])
         elif self.sequence == 2:
-            camera['intrinsic_matrix'] = np.array([[520.9,     0, 325.1],
-                                                   [    0, 521.0, 249.7],
-                                                   [    0,     0,     1]])
-            camera['dist_coefficients'] = np.array([0.2312,	-0.7849, -0.0033, -0.0001, 0.9172])
+            camera['fx'] = 520.9
+            camera['fy'] = 521.0
+            camera['cx'] = 325.1
+            camera['cy'] = 249.7
+            camera['dist_coefficients'] = np.array(
+                [0.2312, -0.7849, -0.0033, -0.0001, 0.9172])
         elif self.sequence == 3:
-            camera['intrinsic_matrix'] = np.array([[535.4,     0, 320.1],
-                                                   [    0, 539.2, 247.6],
-                                                   [    0,     0,     1]])
+            camera['fx'] = 535.4
+            camera['fy'] = 539.2
+            camera['cx'] = 320.1
+            camera['cy'] = 247.6
             camera['dist_coefficients'] = np.zeros(5)
         else:
             assert False, "Invalid sequence number"
         return camera
-
 
     def _readFileList(self, filename: str) -> dict:
         """
@@ -95,13 +100,14 @@ class TumDataloader(Dataloader):
         print(os.getcwd())
         file = open(filename)
         data = file.read()
-        lines = data.replace(","," ").replace("\t"," ").split("\n")
-        list = [[v.strip() for v in line.split(" ") if v.strip()!=""] for line in lines if len(line)>0 and line[0]!="#"]
-        list = [(float(l[0]),l[1:]) for l in list if len(l)>1]
+        lines = data.replace(",", " ").replace("\t", " ").split("\n")
+        list = [[v.strip() for v in line.split(" ") if v.strip() != ""]
+                for line in lines if len(line) > 0 and line[0] != "#"]
+        list = [(float(l[0]), l[1:]) for l in list if len(l) > 1]
         return dict(list)
 
-
-    def _associate(self, first_list: dict, second_list: dict, offset: float, max_difference: float) -> list:
+    def _associate(self, first_list: dict, second_list: dict, offset: float,
+                   max_difference: float) -> list:
         """
         Associate two dictionaries of (stamp,data). As the time stamps never match exactly, we aim
         to find the closest match for every input tuple.
@@ -119,8 +125,7 @@ class TumDataloader(Dataloader):
         first_keys = list(first_list.keys())
         second_keys = list(second_list.keys())
 
-        potential_matches = [(abs(a - (b + offset)), a, b)
-                             for a in first_keys
+        potential_matches = [(abs(a - (b + offset)), a, b) for a in first_keys
                              for b in second_keys
                              if abs(a - (b + offset)) < max_difference]
         potential_matches.sort()
@@ -133,5 +138,3 @@ class TumDataloader(Dataloader):
 
         matches.sort()
         return matches
-
-

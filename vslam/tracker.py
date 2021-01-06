@@ -4,6 +4,7 @@ import cv2
 import time
 import matplotlib.pyplot as plt
 
+from vslam.camera import PinholeCamera
 
 class Tracker:
     """
@@ -11,20 +12,16 @@ class Tracker:
         Estimates camera pose and establishes 3D landmarks for subsequent tracking
 
     """
-    def __init__(self, config):
-        """
-        TODO:
-        """
+    def __init__(self, config: Dict, camera: PinholeCamera = None) -> None:
         self.config = config
+        self.camera = camera
 
     def bootstrap(self,
                   prev_image: np.ndarray,
-                  curr_image: np.ndarray,
-                  intrinsic_matrix: np.ndarray = None) -> Dict:
+                  curr_image: np.ndarray) -> Dict:
         """
 
         Args:
-            intrinsic_matrix: 3x3 Camera intrinsics matrix
             prev_image: rectified first image from monocular camera
             curr_image: rectified second image from monocular camera
 
@@ -44,7 +41,7 @@ class Tracker:
 
         # 2. Estimate Pose using essential matrix (5 point algorithm)
         start = time.time()
-        R, t, inlier_kps1, inlier_kps2 = self.estimatePose(prev_matched_kps, curr_matched_kps, intrinsic_matrix)
+        R, t, inlier_kps1, inlier_kps2 = self.estimatePose(prev_matched_kps, curr_matched_kps)
         print(
             f"{(time.time() - start)*1000} ms for fundamental matrix computation"
         )
@@ -65,13 +62,12 @@ class Tracker:
         print(R, t)
 
         # 3. Triangulate matched keypoints
-        M1 = intrinsic_matrix @ np.eye(4)[:3, :]
-        M2 = intrinsic_matrix @ T_cw[:3, :]
+        M1 = self.camera.intrinsic_matrix @ np.eye(4)[:3, :]
+        M2 = self.camera.intrinsic_matrix @ T_cw[:3, :]
 
         print(M1.shape, M2.shape)
         pts3d = _triangulatePoints(inlier_kps1, inlier_kps2, M1, M2)
 
-        print(pts3d)
         #TODO: Calculate metrics (reprojection error)
         pts3d_proj_homo1 = pts3d @ M1.T
         pts3d_proj_homo2 = pts3d @ M2.T
@@ -86,14 +82,13 @@ class Tracker:
         error2 = np.sum([np.dot(err2, err2) for err2 in error2])
         error2 = np.sqrt(error2) / inlier_kps2.shape[0]
 
+        reproj_errors = [error1, error2]
         print(error1, error2)
-
-
-
-
+        # TODO: Clean up return by creating map datastructure
+        return R, t, inlier_kps1, inlier_kps2, P, reproj_errors
 
     def estimatePose(self, kps1: np.ndarray,
-            kps2: np.ndarray, intrinsic_matrix: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+            kps2: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """
 
         Estimate pose between two frames given the interest points in either of the frames
@@ -114,7 +109,7 @@ class Tracker:
         E, inlier_mask = cv2.findEssentialMat(
             inlier_kps1,
             inlier_kps2,
-            intrinsic_matrix,
+            self.camera.intrinsic_matrix,
             method=cv2.RANSAC,
             prob=self.config["confidence"],
             threshold=self.config["reproj_threshold"])
@@ -122,7 +117,7 @@ class Tracker:
         inlier_kps1 = inlier_kps1[inlier_mask, :]
         inlier_kps2 = inlier_kps2[inlier_mask, :]
         _, R, t, mask = cv2.recoverPose(E, inlier_kps1, inlier_kps2,
-                                        intrinsic_matrix)
+                                        self.camera.intrinsic_matrix)
         return R, t, inlier_kps1, inlier_kps2
 
     def processFrame(self, prev_image: np.ndarray,
