@@ -8,7 +8,10 @@ dataset:
 tracker:
     args:
         max_corners: 1000   # Maximum number of corners to return from feature detector
-        quality_level: 0.2
+        quality_level: 0.1
         nms_radius: 2       #TODO: Non maximal suppression radius, check whether this is in pixels
+        reproj_threshold: 3 #Minimum Reprojection error to regard as outlier during RANSAC
+        confidence: 0.99    #Require 99% confidence for Fundamental matrix estimation
+
 save_dir: "logs/"
 

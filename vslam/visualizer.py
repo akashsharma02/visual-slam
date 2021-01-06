@@ -45,65 +45,65 @@ def createCameraPolyData(R: np.ndarray, t: np.ndarray, only_polys=False) -> vtk.
     if not only_polys:
         line_cells = vtk.vtkCellArray()
 
-        line_cells.InsertNextCell( 5 );
-        line_cells.InsertCellPoint( 1 );
-        line_cells.InsertCellPoint( 2 );
-        line_cells.InsertCellPoint( 3 );
-        line_cells.InsertCellPoint( 4 );
-        line_cells.InsertCellPoint( 1 );
+        line_cells.InsertNextCell( 5 )
+        line_cells.InsertCellPoint( 1 )
+        line_cells.InsertCellPoint( 2 )
+        line_cells.InsertCellPoint( 3 )
+        line_cells.InsertCellPoint( 4 )
+        line_cells.InsertCellPoint( 1 )
 
-        line_cells.InsertNextCell( 3 );
-        line_cells.InsertCellPoint( 1 );
-        line_cells.InsertCellPoint( 0 );
-        line_cells.InsertCellPoint( 2 );
+        line_cells.InsertNextCell( 3 )
+        line_cells.InsertCellPoint( 1 )
+        line_cells.InsertCellPoint( 0 )
+        line_cells.InsertCellPoint( 2 )
 
-        line_cells.InsertNextCell( 3 );
-        line_cells.InsertCellPoint( 3 );
-        line_cells.InsertCellPoint( 0 );
-        line_cells.InsertCellPoint( 4 );
+        line_cells.InsertNextCell( 3 )
+        line_cells.InsertCellPoint( 3 )
+        line_cells.InsertCellPoint( 0 )
+        line_cells.InsertCellPoint( 4 )
 
         # x-axis indicator
-        line_cells.InsertNextCell( 3 );
-        line_cells.InsertCellPoint( 8 );
-        line_cells.InsertCellPoint( 10 );
-        line_cells.InsertCellPoint( 9 );
+        line_cells.InsertNextCell( 3 )
+        line_cells.InsertCellPoint( 8 )
+        line_cells.InsertCellPoint( 10 )
+        line_cells.InsertCellPoint( 9 )
         vpoly.SetLines(line_cells)
     else:
         # left
-        poly_cells.InsertNextCell( 3 );
-        poly_cells.InsertCellPoint( 0 );
-        poly_cells.InsertCellPoint( 1 );
-        poly_cells.InsertCellPoint( 4 );
+        poly_cells.InsertNextCell( 3 )
+        poly_cells.InsertCellPoint( 0 )
+        poly_cells.InsertCellPoint( 1 )
+        poly_cells.InsertCellPoint( 4 )
 
         # right
-        poly_cells.InsertNextCell( 3 );
-        poly_cells.InsertCellPoint( 0 );
-        poly_cells.InsertCellPoint( 3 );
-        poly_cells.InsertCellPoint( 2 );
+        poly_cells.InsertNextCell( 3 )
+        poly_cells.InsertCellPoint( 0 )
+        poly_cells.InsertCellPoint( 3 )
+        poly_cells.InsertCellPoint( 2 )
 
         # top
-        poly_cells.InsertNextCell( 3 );
-        poly_cells.InsertCellPoint( 0 );
-        poly_cells.InsertCellPoint( 4 );
-        poly_cells.InsertCellPoint( 3 );
+        poly_cells.InsertNextCell( 3 )
+        poly_cells.InsertCellPoint( 0 )
+        poly_cells.InsertCellPoint( 4 )
+        poly_cells.InsertCellPoint( 3 )
 
         # bottom
-        poly_cells.InsertNextCell( 3 );
-        poly_cells.InsertCellPoint( 0 );
-        poly_cells.InsertCellPoint( 2 );
-        poly_cells.InsertCellPoint( 1 );
+        poly_cells.InsertNextCell( 3 )
+        poly_cells.InsertCellPoint( 0 )
+        poly_cells.InsertCellPoint( 2 )
+        poly_cells.InsertCellPoint( 1 )
 
         # x-axis indicator
-        poly_cells.InsertNextCell( 3 );
-        poly_cells.InsertCellPoint( 8 );
-        poly_cells.InsertCellPoint( 10 );
-        poly_cells.InsertCellPoint( 9 );
+        poly_cells.InsertNextCell( 3 )
+        poly_cells.InsertCellPoint( 8 )
+        poly_cells.InsertCellPoint( 10 )
+        poly_cells.InsertCellPoint( 9 )
 
     # up vector (y-axis)
-    poly_cells.InsertNextCell( 3 );
-    poly_cells.InsertCellPoint( 5 );
-    poly_cells.InsertCellPoint( 6 );
-    poly_cells.InsertCellPoint( 7 );
+    poly_cells.InsertNextCell( 3 )
+    poly_cells.InsertCellPoint( 5 )
+    poly_cells.InsertCellPoint( 6 )
+    poly_cells.InsertCellPoint( 7 )
 
     vpoly.SetPolys(poly_cells)
     return vpoly
@@ -216,9 +216,9 @@ class InteractiveViz(Process):
         renderer.SetBackground(0, 0, 0)
 
         camera = vtk.vtkCamera()
-        camera.SetPosition((1, 0, -3));
-        camera.SetViewUp((0, -1, 0));
-        camera.SetFocalPoint((0, 0, 1));
+        camera.SetPosition((1, 0, -3))
+        camera.SetViewUp((0, -1, 0))
+        camera.SetFocalPoint((0, 0, 1))
         renderer.SetActiveCamera(camera)
 
         render_window = vtk.vtkRenderWindow()

@@ -21,9 +21,10 @@ def main(config):
     prev_data = dataloader[0]
     curr_data = dataloader[1]
     prev_rgb, curr_rgb = prev_data["rgb"], curr_data["rgb"]
+    camera_matrix = prev_data["cam_params"]["intrinsic_matrix"]
 
     tracker = Tracker(config["tracker"]["args"])
-    tracker.matchImagePair(prev_rgb, curr_rgb)
+    tracker.bootstrap(prev_rgb, curr_rgb, camera_matrix)
 
     # for i in tqdm.tqdm(range(1, len(dataloader)), desc=config['dataset']['type']):
     #     data = dataloader[i]
