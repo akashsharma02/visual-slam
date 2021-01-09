@@ -1,8 +1,10 @@
 from typing import List, Set, Dict, Tuple, Optional
+from enum import Enum
 import numpy as np
 import cv2
 import time
 import matplotlib.pyplot as plt
+import gtsam
 
 from vslam.camera import PinholeCamera
 
@@ -12,9 +14,46 @@ class Tracker:
         Estimates camera pose and establishes 3D landmarks for subsequent tracking
 
     """
+    class State(Enum):
+        NOT_INITIALIZED = 0
+        INITIALIZING = 1
+        RUNNING = 2
+        LOST = 3
+
     def __init__(self, config: Dict, camera: PinholeCamera = None) -> None:
         self.config = config
         self.camera = camera
+        self.state  = self.State.NOT_INITIALIZED
+        self.prev_image = None
+
+    def track(self, curr_image: np.ndarray) -> Dict:
+        """
+
+        Main function in Tracker for
+        1. Initialization
+        2. Tracking by projection
+        2. Tracking with previous frame
+        3. Tracking with map points
+
+        :function:
+            curr_image: rectified image from monocular camera
+        :returns:
+            TODO:
+
+        """
+        if self.state == self.State.NOT_INITIALIZED:
+            self.prev_image = curr_image
+            self.state = self.State.INITIALIZING
+            return
+        elif self.state == self.State.INITIALIZING:
+            msg_no_prev_image = "Previous image is 'None', cannot initialize Tracker"
+            assert self.prev_image != None, msg_no_prev_image
+            #TODO: Return success from bootstrap and retry
+            self.bootstrap(self.prev_image, curr_image)
+            self.state = self.State.RUNNING
+        elif self.state == self.State.RUNNING:
+            pass
+
 
     def bootstrap(self,
                   prev_image: np.ndarray,
@@ -47,6 +86,7 @@ class Tracker:
         )
         T_cw = np.eye(4)
         T_cw[:3, :3], T_cw[:3, 3] = R, t.T
+        T_cw = gtsam.Pose3(T_cw)
 
         #TODO: Enable visualization in debug mode only
         # image_matches = curr_image.copy()
@@ -59,33 +99,29 @@ class Tracker:
         # plt.imshow(cv2.cvtColor(image_matches, cv2.COLOR_BGR2RGB))
         # plt.show()
 
-        print(R, t)
-
         # 3. Triangulate matched keypoints
         M1 = self.camera.intrinsic_matrix @ np.eye(4)[:3, :]
-        M2 = self.camera.intrinsic_matrix @ T_cw[:3, :]
+        M2 = self.camera.intrinsic_matrix @ T_cw.matrix()[:3, :]
 
-        print(M1.shape, M2.shape)
         pts3d = _triangulatePoints(inlier_kps1, inlier_kps2, M1, M2)
 
-        #TODO: Calculate metrics (reprojection error)
+        # 4. Calculate metrics (reprojection error)
         pts3d_proj_homo1 = pts3d @ M1.T
         pts3d_proj_homo2 = pts3d @ M2.T
         pts3d_proj_homo1 /= pts3d_proj_homo1[:, 2][:, None]
         pts3d_proj_homo2 /= pts3d_proj_homo2[:, 2][:, None]
 
         error1 = inlier_kps1 - pts3d_proj_homo1[:, :2]
-        print(error1.shape)
         error1 = np.sum([np.dot(err1, err1) for err1 in error1])
         error1 = np.sqrt(error1) / inlier_kps1.shape[0]
+
         error2 = inlier_kps2 - pts3d_proj_homo2[:, :2]
         error2 = np.sum([np.dot(err2, err2) for err2 in error2])
         error2 = np.sqrt(error2) / inlier_kps2.shape[0]
 
         reproj_errors = [error1, error2]
-        print(error1, error2)
         # TODO: Clean up return by creating map datastructure
-        return R, t, inlier_kps1, inlier_kps2, P, reproj_errors
+        return T_cw, inlier_kps1, inlier_kps2, pts3d, reproj_errors
 
     def estimatePose(self, kps1: np.ndarray,
             kps2: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
@@ -162,7 +198,7 @@ class Tracker:
         curr_image_gray = cv2.cvtColor(curr_image, cv2.COLOR_BGR2GRAY)
 
         prev_corners = cv2.goodFeaturesToTrack(prev_image_gray,
-                                               self.config["max_corners"],
+                                               self.config["num_interest_points"],
                                                self.config["quality_level"],
                                                self.config["nms_radius"])
         #TODO Visualize prev_keypoints for logger in verbose debug mode
@@ -175,7 +211,7 @@ class Tracker:
         # cv2.waitKey(0)
 
         curr_corners = cv2.goodFeaturesToTrack(curr_image_gray,
-                                               self.config["max_corners"],
+                                               self.config["num_interest_points"],
                                                self.config["quality_level"],
                                                self.config["nms_radius"])
 
@@ -183,7 +219,7 @@ class Tracker:
         curr_keypoints = _corners_to_keypoints(curr_corners)
 
         # 2. Compute descriptors for detected features
-        orb = cv2.ORB_create(self.config["max_corners"],
+        orb = cv2.ORB_create(self.config["num_interest_points"],
                              scaleFactor=1.2,
                              nlevels=3)
         prev_keypoints, prev_desc = orb.compute(prev_image_gray,

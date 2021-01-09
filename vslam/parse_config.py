@@ -28,7 +28,7 @@ class ConfigParser:
     @classmethod
     def from_args(cls: ConfigParser, args: argparse.ArgumentParser) -> ConfigParser:
         """
-        Initialize ConfigParse from command line arguments and config
+        Initialize ConfigParser from command line arguments and config
         """
         if not isinstance(args, tuple):
             args = args.parse_args()

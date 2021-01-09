@@ -53,8 +53,8 @@ class PinholeCamera(Camera):
         """
         super().__init__(width, height, fx, fy, cx, cy, dist_coefficients)
         self.intrinsic_matrix = np.array([[self.fx, 0, self.cx],
-                                   [0, self.fy, self.cy],
-                                   [0,       0,       1]])
+                                          [0, self.fy, self.cy],
+                                          [0,       0,       1]])
         self.intrinsic_matrix_inv = np.linalg.inv(self.intrinsic_matrix)
 
     def project(self, pts3d: np.ndarray) -> np.ndarray:

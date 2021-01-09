@@ -7,7 +7,7 @@ save_dir: logs/
 tracker:
   args:
     confidence: 0.99
-    max_corners: 1000
     nms_radius: 2
+    num_interest_points: 1000
     quality_level: 0.1
     reproj_threshold: 3

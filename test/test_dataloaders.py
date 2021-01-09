@@ -69,7 +69,6 @@ class TestTumDataloader(object):
             data_dict = tum[i]
             rgb = data_dict["rgb"]
             depth = data_dict["depth"]
-            cam_params = data_dict["cam_params"]
 
             assert rgb.dtype == np.uint8
             assert rgb.shape == (480, 640, 3)
@@ -80,8 +79,10 @@ class TestTumDataloader(object):
             cv2.imshow("test_get_item", depth)
             cv2.waitKey(100)
 
-            assert cam_params["intrinsic_matrix"].shape == (3, 3)
+    def test_get_camera_params(self):
+        """
 
 
+        """
 
 

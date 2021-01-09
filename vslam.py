@@ -2,6 +2,7 @@ import numpy as np
 import argparse
 import tqdm
 import cv2
+import gtsam
 
 from vslam.parse_config import ConfigParser
 from vslam import visualizer as viz
@@ -33,7 +34,7 @@ def main(config):
 
     tracker = Tracker(config["tracker"]["args"], camera)
     #TODO: Change interface to accept camera
-    R, t, kps1, kps2, P, reproj_errors = tracker.bootstrap(prev_rgb, curr_rgb)
+    T_cw, kps1, kps2, P, reproj_errors = tracker.bootstrap(prev_rgb, curr_rgb)
 
     # for i in tqdm.tqdm(range(1, len(dataloader)), desc=config['dataset']['type']):
     #     data = dataloader[i]

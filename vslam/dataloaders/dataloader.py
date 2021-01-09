@@ -16,7 +16,6 @@ class Dataloader(ABC):
 
         self.files = []
 
-
     @abstractmethod
     def __len__(self) -> int:
         """Returns length of the data stream
