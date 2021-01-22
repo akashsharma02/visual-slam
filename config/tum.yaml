@@ -2,6 +2,22 @@
 dataset:
     type: "TumDataloader"
     args:
-        path: "/home/akashsharma/Documents/datasets/tum/rgbd_dataset_freiburg1_xyz/"
+        path: "/home/alex/Documents/datasets/rgbd_dataset_freiburg1_xyz/"
         sequence: "1"
+
+tracker:
+    args:
+        #TODO: Replace variable with max_interest_points
+        num_interest_points: 1000   # Maximum number of corners to return from feature detector
+        quality_level: 0.1
+        nms_radius: 2       #TODO: Non maximal suppression radius, check whether this is in pixels
+        reproj_threshold: 3 #Minimum Reprojection error to regard as outlier during RANSAC
+        confidence: 0.99    #Require 99% confidence for Fundamental matrix estimation
+
+feature: 
+    type: "SIFTFeatureExtractor"
+    args:
+        nfeatures: 0
+        nOctaveLayers: 3
+
 save_dir: "logs/"

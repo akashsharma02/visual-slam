@@ -14,5 +14,12 @@ tracker:
         reproj_threshold: 3 #Minimum Reprojection error to regard as outlier during RANSAC
         confidence: 0.99    #Require 99% confidence for Fundamental matrix estimation
 
+
+feature: 
+    type: "ORBFeatureExtractor"
+    args:
+        nfeatures: 500
+        scaleFactor: 1.2
+
 save_dir: "logs/"
 

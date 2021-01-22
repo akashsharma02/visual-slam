@@ -6,7 +6,8 @@ import time
 import matplotlib.pyplot as plt
 import gtsam
 
-from vslam.camera import PinholeCamera
+from vslam.types.camera import PinholeCamera
+from vslam.feature.feature import FeatureExtractor
 
 class Tracker:
     """
@@ -20,11 +21,12 @@ class Tracker:
         RUNNING = 2
         LOST = 3
 
-    def __init__(self, config: Dict, camera: PinholeCamera = None) -> None:
+    def __init__(self, config: Dict, camera: PinholeCamera = None, feature: FeatureExtractor = None) -> None:
         self.config = config
         self.camera = camera
         self.state  = self.State.NOT_INITIALIZED
         self.prev_image = None
+        self.feature = feature
 
     def track(self, curr_image: np.ndarray) -> Dict:
         """
@@ -197,35 +199,38 @@ class Tracker:
         prev_image_gray = cv2.cvtColor(prev_image, cv2.COLOR_BGR2GRAY)
         curr_image_gray = cv2.cvtColor(curr_image, cv2.COLOR_BGR2GRAY)
 
-        prev_corners = cv2.goodFeaturesToTrack(prev_image_gray,
-                                               self.config["num_interest_points"],
-                                               self.config["quality_level"],
-                                               self.config["nms_radius"])
-        #TODO Visualize prev_keypoints for logger in verbose debug mode
-        # prev_image_corners = prev_image.copy()
-        # cv2.waitKey(0)
-        # for corner in prev_corners:
-        #     x, y = corner.ravel()
-        #     cv2.drawMarker(prev_image_corners, (x, y), (0, 255, 0), markerType=cv2.MARKER_CROSS, thickness=1, markerSize=10)
-        # cv2.imshow("Corners debug", prev_image_corners)
-        # cv2.waitKey(0)
+        if self.feature is not None:
+            prev_keypoints, prev_desc = self.feature.detectAndCompute(prev_image_gray)
+            curr_keypoints, curr_desc = self.feature.detectAndCompute(curr_image_gray)
+        else:
+            prev_corners = cv2.goodFeaturesToTrack(prev_image_gray,
+                                                self.config["num_interest_points"],
+                                                self.config["quality_level"],
+                                                self.config["nms_radius"])
+            #TODO Visualize prev_keypoints for logger in verbose debug mode
+            # prev_image_corners = prev_image.copy()
+            # cv2.waitKey(0)
+            # for corner in prev_corners:
+            #     x, y = corner.ravel()
+            #     cv2.drawMarker(prev_image_corners, (x, y), (0, 255, 0), markerType=cv2.MARKER_CROSS, thickness=1, markerSize=10)
+            # cv2.imshow("Corners debug", prev_image_corners)
+            # cv2.waitKey(0)
 
-        curr_corners = cv2.goodFeaturesToTrack(curr_image_gray,
-                                               self.config["num_interest_points"],
-                                               self.config["quality_level"],
-                                               self.config["nms_radius"])
+            curr_corners = cv2.goodFeaturesToTrack(curr_image_gray,
+                                                self.config["num_interest_points"],
+                                                self.config["quality_level"],
+                                                self.config["nms_radius"])
+            prev_keypoints = _corners_to_keypoints(prev_corners)
+            curr_keypoints = _corners_to_keypoints(curr_corners)
 
-        prev_keypoints = _corners_to_keypoints(prev_corners)
-        curr_keypoints = _corners_to_keypoints(curr_corners)
-
-        # 2. Compute descriptors for detected features
-        orb = cv2.ORB_create(self.config["num_interest_points"],
-                             scaleFactor=1.2,
-                             nlevels=3)
-        prev_keypoints, prev_desc = orb.compute(prev_image_gray,
-                                                prev_keypoints)
-        curr_keypoints, curr_desc = orb.compute(curr_image_gray,
-                                                curr_keypoints)
+            # 2. Compute descriptors for detected features
+            orb = cv2.ORB_create(self.config["num_interest_points"],
+                                scaleFactor=1.2,
+                                nlevels=3)
+            prev_keypoints, prev_desc = orb.compute(prev_image_gray,
+                                                    prev_keypoints)
+            curr_keypoints, curr_desc = orb.compute(curr_image_gray,
+                                                    curr_keypoints)
 
         # 3. Compute matches
         bf = cv2.BFMatcher()

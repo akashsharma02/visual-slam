@@ -17,7 +17,7 @@ class Map(object):
         self.points = np.ndarray 3xN points of all the points that are in the map at any given time
         """
         self.config = config
-        self.frames = deque(maxlen=self.config["frame_max_length"]
+        self.frames = deque(maxlen=self.config["frame_max_length"])
         # TODO: keyframes
         self.points = None
 
