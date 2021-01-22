@@ -23,7 +23,7 @@ class SIFTFeatureExtractor(FeatureExtractor):
             Returns:
                 List of keypoints
         """
-
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return self.sift.detect(img, mask=mask)
 
     def compute(self, img: np.ndarray, kp: list) -> Tuple[list, np.ndarray]:
@@ -34,6 +34,7 @@ class SIFTFeatureExtractor(FeatureExtractor):
             Returns:
                 Tuple of keypoint and corresponding feature descriptor
         """
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return self.sift.compute(img, kp)
 
     def detectAndCompute(self, img: np.ndarray, mask : np.ndarray = None) -> Tuple[list, np.ndarray]:
@@ -45,6 +46,7 @@ class SIFTFeatureExtractor(FeatureExtractor):
             Returns:
                 Tuple of Keypoint and descriptors
         """
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return self.sift.detectAndCompute(img, mask = mask)
                 
         

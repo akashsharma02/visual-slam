@@ -23,7 +23,7 @@ class ORBFeatureExtractor(FeatureExtractor):
             Returns:
                 List of keypoints
         """
-
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return self.orb.detect(img, mask=mask)
 
     def compute(self, img: np.ndarray, kp: list) -> Tuple[list, np.ndarray]:
@@ -34,6 +34,7 @@ class ORBFeatureExtractor(FeatureExtractor):
             Returns:
                 Tuple of keypoint and corresponding feature descriptor
         """
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return self.orb.compute(img, kp)
 
     def detectAndCompute(self, img: np.ndarray, mask : np.ndarray = None) -> Tuple[list, np.ndarray]:
@@ -45,6 +46,7 @@ class ORBFeatureExtractor(FeatureExtractor):
             Returns:
                 Tuple of Keypoint and descriptors
         """
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return self.orb.detectAndCompute(img, mask = mask)
                 
         
