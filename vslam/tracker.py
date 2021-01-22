@@ -195,14 +195,15 @@ class Tracker:
             Tuple containing 2D matched keypoints from database and query image respectively
 
         """
-        # 1. Detect keypoints in image 1 (prev) and 2 (curr)
-        prev_image_gray = cv2.cvtColor(prev_image, cv2.COLOR_BGR2GRAY)
-        curr_image_gray = cv2.cvtColor(curr_image, cv2.COLOR_BGR2GRAY)
-
+        # If feature provided
         if self.feature is not None:
-            prev_keypoints, prev_desc = self.feature.detectAndCompute(prev_image_gray)
-            curr_keypoints, curr_desc = self.feature.detectAndCompute(curr_image_gray)
+            prev_keypoints, prev_desc = self.feature.detectAndCompute(prev_image)
+            curr_keypoints, curr_desc = self.feature.detectAndCompute(curr_image)
         else:
+            # 1. Detect keypoints in image 1 (prev) and 2 (curr)
+            # cv2 color put here since some trackers requires numpy arrays instead of cv2 form of it.
+            prev_image_gray = cv2.cvtColor(prev_image, cv2.COLOR_BGR2GRAY)
+            curr_image_gray = cv2.cvtColor(curr_image, cv2.COLOR_BGR2GRAY)
             prev_corners = cv2.goodFeaturesToTrack(prev_image_gray,
                                                 self.config["num_interest_points"],
                                                 self.config["quality_level"],
@@ -253,7 +254,7 @@ class Tracker:
         #     x2, y2 = int(kp2[0]), int(kp2[1])
         #     image_matches = cv2.arrowedLine(curr_image, (x1, y1), (x2, y2), (0, 255, 0), 1)
         # img_matches = cv2.drawMatches(prev_image, prev_keypoints, curr_image,
-        #                               curr_keypoints, matches, None,
+        #                               curr_keypoints, good, None,
         #                               matchColor=(0, 255, 0), singlePointColor=(255, 0, 0),
         #                               flags=0)
         # cv2.imshow("matched_keypoints", image_matches)
