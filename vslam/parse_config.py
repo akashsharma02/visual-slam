@@ -35,10 +35,20 @@ class ConfigParser:
 
         msg_no_cfg = "Configuration file needs to be specified. Add '-c config.yaml' argument when running"
         assert args.config is not None, msg_no_cfg
+
+        msg_no_feat = "Configuration file needs to be specified. Add '-f feat.yaml' argument when running"
+        assert args.feat is not None, msg_no_feat
+
         cfg_filename = Path(args.config)
 
         filestream = open(cfg_filename, 'r')
         config = yaml.load(filestream, Loader=yaml.FullLoader)
+
+        feat_filename = Path(args.feat)
+        filestream = open(feat_filename, 'r')
+        feat = yaml.load(filestream, Loader=yaml.FullLoader)
+        
+        config.update(feat)
         print(config)
         return cls(config)
 

@@ -14,10 +14,4 @@ tracker:
         reproj_threshold: 3 #Minimum Reprojection error to regard as outlier during RANSAC
         confidence: 0.99    #Require 99% confidence for Fundamental matrix estimation
 
-feature: 
-    type: "SIFTFeatureExtractor"
-    args:
-        nfeatures: 0
-        nOctaveLayers: 3
-
 save_dir: "logs/"

@@ -1,0 +1,5 @@
+feature: 
+    type: "ORBFeatureExtractor"
+    args:
+        nfeatures: 500
+        # nlevels: 2
