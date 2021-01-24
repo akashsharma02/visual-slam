@@ -7,9 +7,9 @@ import gtsam
 from vslam.parse_config import ConfigParser
 from vslam import visualizer as viz
 from vslam import dataloaders
-from vslam.camera import Camera, PinholeCamera
+from vslam.types import Camera, PinholeCamera
 from vslam.tracker import Tracker
-
+from vslam import feature
 
 def main(config):
     """TODO: Docstring for main.
@@ -27,21 +27,16 @@ def main(config):
                            cam_params['cx'], cam_params['cy'],
                            cam_params['dist_coefficients'])
 
-    prev_data = dataloader[0]
-    curr_data = dataloader[1]
+    feat_extractor = config.init_obj('feature', feature)
+    tracker = Tracker(config["tracker"]["args"], camera, feat_extractor)
 
-    prev_rgb, curr_rgb = prev_data["rgb"], curr_data["rgb"]
-
-    tracker = Tracker(config["tracker"]["args"], camera)
-    #TODO: Change interface to accept camera
-    T_cw, kps1, kps2, P, reproj_errors = tracker.bootstrap(prev_rgb, curr_rgb)
-
-    # for i in tqdm.tqdm(range(1, len(dataloader)), desc=config['dataset']['type']):
-    #     data = dataloader[i]
-
-    #     cv2.imshow("rgb image", data["rgb"])
-    #     cv2.waitKey(1)
-
+    for i in tqdm.tqdm(range(5, 15), desc=config['dataset']['type']):
+        # data = dataloader[i]
+        # cv2.imshow("rgb image", data["rgb"])
+        # cv2.waitKey(1)
+        prev_rgb = dataloader[i - 1]['rgb']
+        curr_rgb = dataloader[i]['rgb']
+        T_cw, _, _, _, _ = tracker.bootstrap(prev_rgb, curr_rgb)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Awesome Visual SLAM")
@@ -50,6 +45,10 @@ if __name__ == "__main__":
                         default=None,
                         help="Path to the configuration yaml file",
                         type=str)
-
+    parser.add_argument("-f",
+                        "--feat",
+                        default=None,
+                        help="Path to the Feature yaml file",
+                        type=str)
     config = ConfigParser.from_args(parser)
     main(config)
