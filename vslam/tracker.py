@@ -124,7 +124,7 @@ class Tracker:
         return T_cw, inlier_kps1, inlier_kps2, pts3d, reproj_errors
 
     def estimatePose(self, kps1: np.ndarray,
-            kps2: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+            kps2: np.ndarray) -> Tuple[SE3Pose, np.ndarray, np.ndarray]:
         """
 
         Estimate pose between two frames given the interest points in either of the frames

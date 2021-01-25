@@ -1,13 +1,9 @@
-import numpy as np
 import argparse
-import tqdm
-import cv2
-import gtsam
 
 from vslam.parse_config import ConfigParser
 from vslam import visualizer as viz
 from vslam import dataloaders
-from vslam.camera import Camera, PinholeCamera
+from vslam.types import PinholeCamera
 from vslam.tracker import Tracker
 
 
