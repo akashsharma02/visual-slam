@@ -1,13 +1,78 @@
-dataset:
-  args:
-    path: /home/akashsharma/Documents/datasets/kitti/odometry/
-    sequence: '00'
-  type: KittiDataloader
-save_dir: logs/
-tracker:
-  args:
-    confidence: 0.99
-    nms_radius: 2
-    num_interest_points: 1000
-    quality_level: 0.1
-    reproj_threshold: 3
+!!python/object/new:vslam.parser.cfgnode.CfgNode
+dictitems:
+  dataset: !!python/object/new:vslam.parser.cfgnode.CfgNode
+    dictitems:
+      args: !!python/object/new:vslam.parser.cfgnode.CfgNode
+        dictitems:
+          path: /home/akashsharma/Documents/datasets/kitti/odometry/
+          sequence: '00'
+        state:
+          __deprecated_keys__: !!set {}
+          __immutable__: false
+          __new_allowed__: false
+          __renamed_keys__: {}
+      type: KittiDataloader
+    state:
+      __deprecated_keys__: !!set {}
+      __immutable__: false
+      __new_allowed__: false
+      __renamed_keys__: {}
+  frame: !!python/object/new:vslam.parser.cfgnode.CfgNode
+    dictitems:
+      args: !!python/object/new:vslam.parser.cfgnode.CfgNode
+        dictitems:
+          nms_radius: 2
+          num_interest_points: 1000
+          quality_level: 0.1
+        state:
+          __deprecated_keys__: !!set {}
+          __immutable__: false
+          __new_allowed__: false
+          __renamed_keys__: {}
+    state:
+      __deprecated_keys__: !!set {}
+      __immutable__: false
+      __new_allowed__: false
+      __renamed_keys__: {}
+  map: !!python/object/new:vslam.parser.cfgnode.CfgNode
+    dictitems:
+      args: !!python/object/new:vslam.parser.cfgnode.CfgNode
+        dictitems:
+          keyframe_max_length: 5000
+        state:
+          __deprecated_keys__: !!set {}
+          __immutable__: false
+          __new_allowed__: false
+          __renamed_keys__: {}
+    state:
+      __deprecated_keys__: !!set {}
+      __immutable__: false
+      __new_allowed__: false
+      __renamed_keys__: {}
+  save_dir: logs/
+  tracker: !!python/object/new:vslam.parser.cfgnode.CfgNode
+    dictitems:
+      args: !!python/object/new:vslam.parser.cfgnode.CfgNode
+        dictitems:
+          confidence: 0.99
+          max_init_reproj_error: 0.05
+          min_init_interest_points: 100
+          nms_radius: 2
+          num_interest_points: 1000
+          quality_level: 0.1
+          reproj_threshold: 3
+        state:
+          __deprecated_keys__: !!set {}
+          __immutable__: false
+          __new_allowed__: false
+          __renamed_keys__: {}
+    state:
+      __deprecated_keys__: !!set {}
+      __immutable__: false
+      __new_allowed__: false
+      __renamed_keys__: {}
+state:
+  __deprecated_keys__: !!set {}
+  __immutable__: false
+  __new_allowed__: false
+  __renamed_keys__: {}

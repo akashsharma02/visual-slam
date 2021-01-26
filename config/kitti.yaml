@@ -1,18 +1,27 @@
 # YAML configuration file for running VSLAM with Kitti Dataset Sequence 00
 dataset:
-    type: "KittiDataloader"
-    args:
-        path: "/home/akashsharma/Documents/datasets/kitti/odometry/"
-        sequence: "00"
+  type: "KittiDataloader"
+  args:
+    path: "/home/akashsharma/Documents/datasets/kitti/odometry/"
+    sequence: "00"
 
 tracker:
-    args:
-        #TODO: Replace variable with max_interest_points
-        num_interest_points: 1000   # Maximum number of corners to return from feature detector
-        quality_level: 0.1
-        nms_radius: 2       #TODO: Non maximal suppression radius, check whether this is in pixels
-        reproj_threshold: 3 #Minimum Reprojection error to regard as outlier during RANSAC
-        confidence: 0.99    #Require 99% confidence for Fundamental matrix estimation
+  args:
+    #TODO: Replace variable with max_interest_points
+    num_interest_points: 1000 # Maximum number of interest points to return from feature detector
+    min_init_interest_points: 100 # Minimum number of points required for initialization
+    max_init_reproj_error: 0.05 # Maximum allowable reprojection error for initialization
+    quality_level: 0.1
+    nms_radius: 2 #TODO: Non maximal suppression radius, check whether this is in pixels
+    reproj_threshold: 3 #Minimum Reprojection error to regard as outlier during RANSAC
+    confidence: 0.99 #Require 99% confidence for Fundamental matrix estimation
 
+frame:
+  args:
+    num_interest_points: 1000
+    quality_level: 0.1
+    nms_radius: 2
+map:
+  args:
+    keyframe_max_length: 5000
 save_dir: "logs/"
-

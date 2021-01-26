@@ -83,3 +83,15 @@ class PinholeCamera(Camera):
         pts2d_homo = np.vstack(pts2d, np.ones(pts2d.shape[1]))
         pts3d = self.intrinsic_matrix_inv @ pts2d_homo
         return pts3d
+
+    def undistortPoints(self, kps: np.ndarray) -> np.ndarray:
+        """
+        Undistort keypoints array using the camera intrinsics
+
+        :Args:
+            kps: Nx2 numpy ndarray with keypoints
+        :returns:
+            kps_un: Nx2 numpy ndarray with undistorted keypoints
+
+        """
+        return cv2.undistortPoints(kps, self.intrinsic_matrix, self.dist_coefficients)

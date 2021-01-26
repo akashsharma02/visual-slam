@@ -30,10 +30,12 @@ class KittiDataloader(Dataloader):
         Return a dictionary of relevant data
         """
         img = self._kitti.get_cam2(index)
+        timestamp = self._kitti.timestamps[index]
         img_np = np.array(img)
         img_cv2 = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
         data_dict = {
             "rgb": img_cv2,
+            "timestamp": timestamp,
             "cam_params": self.camera_params
         }
         return data_dict
