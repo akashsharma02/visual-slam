@@ -1,13 +1,11 @@
-import numpy as np
 import argparse
-import tqdm
+from tqdm import tqdm
 import cv2
-import gtsam
 
-from vslam.parse_config import ConfigParser
+from vslam.parser import ConfigParser, CfgNode
 from vslam import visualizer as viz
 from vslam import dataloaders
-from vslam.types import Camera, PinholeCamera
+from vslam.types import PinholeCamera, Frame, Map
 from vslam.tracker import Tracker
 from vslam import feature
 
@@ -27,16 +25,27 @@ def main(config):
                            cam_params['cx'], cam_params['cy'],
                            cam_params['dist_coefficients'])
 
-    feat_extractor = config.init_obj('feature', feature)
-    tracker = Tracker(config["tracker"]["args"], camera, feat_extractor)
+    prev_data = dataloader[0]
+    curr_data = dataloader[1]
 
-    for i in tqdm.tqdm(range(5, 15), desc=config['dataset']['type']):
-        # data = dataloader[i]
-        # cv2.imshow("rgb image", data["rgb"])
-        # cv2.waitKey(1)
-        prev_rgb = dataloader[i - 1]['rgb']
-        curr_rgb = dataloader[i]['rgb']
-        T_cw, _, _, _, _ = tracker.bootstrap(prev_rgb, curr_rgb)
+    # prev_frame = Frame(prev_data['rgb'], prev_data['timestamp'], config.frame.args, camera)
+
+    #curr_frame = Frame(curr_data['rgb'], curr_data['timestamp'], camera)
+    #prev_rgb, curr_rgb = prev_data["rgb"], curr_data["rgb"]
+
+
+    tracker = Tracker(config.tracker.args, config.map.args, camera)
+    slam_map = None
+    ##TODO: Change interface to accept camera
+    ## T_cw, P = tracker.bootstrap(prev_frame, curr_frame)
+    ## print(P)
+
+    print(tracker.state)
+    for i in tqdm(range(0, 5), desc=config.dataset.type):
+        data = dataloader[i]
+        curr_frame = Frame(data['rgb'], data['timestamp'], config.frame.args, camera)
+        tracker.track(curr_frame, slam_map)
+        print(tracker.state)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Awesome Visual SLAM")
@@ -44,11 +53,6 @@ if __name__ == "__main__":
                         "--config",
                         default=None,
                         help="Path to the configuration yaml file",
-                        type=str)
-    parser.add_argument("-f",
-                        "--feat",
-                        default=None,
-                        help="Path to the Feature yaml file",
                         type=str)
     config = ConfigParser.from_args(parser)
     main(config)
