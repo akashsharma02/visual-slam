@@ -4,3 +4,4 @@
 .vscode/*
 prototype/
 prototype/*
+__pycache__
