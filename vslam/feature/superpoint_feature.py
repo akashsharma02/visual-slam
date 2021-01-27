@@ -2,7 +2,7 @@ from typing import List, Tuple, Optional
 import numpy as np
 import cv2
 from .feature import FeatureExtractor
-from .SuperPointPretrainedNetwork.demo_superpoint import SuperPointFrontend, PointTracker, VideoStreamer
+from thirdparty.SuperPointPretrainedNetwork.demo_superpoint import SuperPointFrontend, PointTracker, VideoStreamer
 
 class SuperPointFeatureExtractor(FeatureExtractor):
     """
@@ -72,9 +72,9 @@ class SuperPointFeatureExtractor(FeatureExtractor):
                 Tuple of Keypoint and descriptors
         """
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        grayim = cv2.resize(img, (self.img_w, self.img_h), interpolation=cv2.INTER_AREA)
-        grayim = (grayim.astype('float32') / 255.)
-        pts, desc, heatmap = self.fe.run(grayim)
+        gray_img = cv2.resize(img, (self.img_w, self.img_h), interpolation=cv2.INTER_AREA)
+        gray_img = (gray_img.astype('float32') / 255.)
+        pts, desc, heatmap = self.fe.run(gray_img)
         kpts = self._pts_to_keypoints(pts, img.shape, (self.img_h, self.img_w))
         return kpts, desc.T
         

@@ -11,18 +11,17 @@ class FeatureExtractor(ABC):
         pass
 
     @abstractmethod
-    def detect(self, img: np.ndarray) -> list:
+    def detect(self, img: np.ndarray) -> List:
         """
-
         Args:
             Image in the form of ndarray
         Returns:
-            Interest points 
+            List of Keypoints 
         """
         pass
 
     @abstractmethod
-    def compute(self, img: np.ndarray, feat: np.ndarray) -> Tuple[list, np.ndarray]:
+    def compute(self, img: np.ndarray, feat: np.ndarray) -> Tuple[List, np.ndarray]:
         """Compute Descriptors with given interest points
 
         Args:
@@ -30,18 +29,20 @@ class FeatureExtractor(ABC):
             Interest Points
 
         Returns:
-            Tuple of interest points and descriptors
+            Tuple of interest points and corresponing descriptors
+            Tuple[Length N list, N x d np.ndarray]
         """
         pass
 
     @abstractmethod
-    def detectAndCompute(self, img: np.ndarray) -> Tuple[list, np.ndarray]:
+    def detectAndCompute(self, img: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """Detect Interest Points and compute corresponding feature descriptors
 
         Args:
             Image
 
         Returns:
-            Tuple of Keypoint and Corresponing Descriptors
+            Tuple of interest points and corresponing descriptors
+            Tuple[Length N list, N x d np.ndarray]
         """
         pass

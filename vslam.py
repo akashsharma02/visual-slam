@@ -8,6 +8,7 @@ from vslam import dataloaders
 from vslam.types import PinholeCamera, Frame, Map
 from vslam.tracker import Tracker
 from vslam import feature
+from vslam import feature
 
 def main(config):
     """TODO: Docstring for main.
@@ -28,22 +29,14 @@ def main(config):
     prev_data = dataloader[0]
     curr_data = dataloader[1]
 
-    # prev_frame = Frame(prev_data['rgb'], prev_data['timestamp'], config.frame.args, camera)
-
-    #curr_frame = Frame(curr_data['rgb'], curr_data['timestamp'], camera)
-    #prev_rgb, curr_rgb = prev_data["rgb"], curr_data["rgb"]
-
-
+    feature_extractor = config.init_obj('feature', feature)
     tracker = Tracker(config.tracker.args, config.map.args, camera)
     slam_map = None
-    ##TODO: Change interface to accept camera
-    ## T_cw, P = tracker.bootstrap(prev_frame, curr_frame)
-    ## print(P)
 
     print(tracker.state)
-    for i in tqdm(range(0, 5), desc=config.dataset.type):
+    for i in tqdm(range(0, 10), desc=config.dataset.type):
         data = dataloader[i]
-        curr_frame = Frame(data['rgb'], data['timestamp'], config.frame.args, camera)
+        curr_frame = Frame(data['rgb'], data['rgb_stamp'], config.frame.args, camera, feature_extractor)
         tracker.track(curr_frame, slam_map)
         print(tracker.state)
 

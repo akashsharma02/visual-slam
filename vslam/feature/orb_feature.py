@@ -3,6 +3,7 @@ import operator
 import numpy as np
 from .feature import FeatureExtractor
 import cv2
+import time
 
 class ORBFeatureExtractor(FeatureExtractor):
     """
@@ -103,10 +104,11 @@ class ORBFeatureExtractor(FeatureExtractor):
 
                     # TODO:
                     # 1. Adapt FAST Threshold
-                    # 2. Modify Octave number, and in a fast way
-                    # Compute keypoint angle and octave
+                    # Compute keypoint angle
                     kps = self.fast.detect(imgPyrd[i][iniY:maxY, iniX:maxX])
                     for kp in kps:
+                        # NOTE: CV2 Keypoint returns reprojected coordinate in Pyramid level 0, while octave
+                        # number could be higher
                         kp.pt = ((kp.pt[0] + k * wCell) * np.power(self.scaleFactor, i).astype(float), \
                              (kp.pt[1] + j * hCell) * np.power(self.scaleFactor, i).astype(float))
                         kp.octave = i
@@ -199,7 +201,12 @@ class ORBFeatureExtractor(FeatureExtractor):
                 Tuple of Keypoint and descriptors
         """
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        k = time.perf_counter()
         imgPyrd = self._computePyramid(img)
+        q = time.perf_counter() - k
+        print(q)
         kps = self._computeKeyPoints(imgPyrd)
+        print(time.perf_counter() - q)
         # kps = [k for k in kps if k.octave == 0]
         return self.orb.compute(img, kps)
