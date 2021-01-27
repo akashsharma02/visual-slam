@@ -46,8 +46,8 @@ class TumDataloader(Dataloader):
         data_dict = {
             "rgb": rgb,
             "depth": depth,
-            "rgb_stamp": rgb_stamp,
-            "depth_stamp": depth_stamp,
+            "rgb_timestamp": rgb_stamp,
+            "depth_timestamp": depth_stamp,
         }
         return data_dict
 

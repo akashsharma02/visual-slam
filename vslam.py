@@ -35,7 +35,7 @@ def main(config):
     print(tracker.state)
     for i in tqdm(range(0, 10), desc=config.dataset.type):
         data = dataloader[i]
-        curr_frame = Frame(data['rgb'], data['rgb_stamp'], config.frame.args, camera, feature_extractor)
+        curr_frame = Frame(data['rgb'], data['rgb_timestamp'], config.frame.args, camera, feature_extractor)
         tracker.track(curr_frame, slam_map)
         print(tracker.state)
 

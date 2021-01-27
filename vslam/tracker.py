@@ -47,6 +47,7 @@ class Tracker:
         """
         if self.state == self.State.NOT_INITIALIZED:
             # If there are enough keypoints in the frame
+            print(curr_frame.kps)
             if curr_frame.kps.shape[0] > self.config.min_init_interest_points:
                 self.initial_frame = curr_frame
             self.state = self.State.INITIALIZING

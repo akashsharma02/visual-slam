@@ -17,6 +17,22 @@ dictitems:
       __immutable__: false
       __new_allowed__: false
       __renamed_keys__: {}
+  feature: !!python/object/new:vslam.parser.cfgnode.CfgNode
+    dictitems:
+      args: !!python/object/new:vslam.parser.cfgnode.CfgNode
+        dictitems:
+          nfeatures: 2500
+        state:
+          __deprecated_keys__: !!set {}
+          __immutable__: false
+          __new_allowed__: false
+          __renamed_keys__: {}
+      type: ORBFeatureExtractor
+    state:
+      __deprecated_keys__: !!set {}
+      __immutable__: false
+      __new_allowed__: false
+      __renamed_keys__: {}
   frame: !!python/object/new:vslam.parser.cfgnode.CfgNode
     dictitems:
       args: !!python/object/new:vslam.parser.cfgnode.CfgNode

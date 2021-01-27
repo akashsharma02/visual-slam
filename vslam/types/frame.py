@@ -40,7 +40,6 @@ class Frame(object):
         else:
             self.pose = gtsam.Pose3()
 
-        kps = None
         if feature_tracker is None:
             # TODO: Add custom feature tracker for KLT + ORB descriptor
             self.kps = cv2.goodFeaturesToTrack(self.image,
@@ -51,13 +50,12 @@ class Frame(object):
             orb = cv2.ORB_create(self.config.num_interest_points,
                                  scaleFactor=1.2,
                                  nlevels=3)
-            kps, self.des = orb.compute(self.image, kps)
+            self.kps, self.des = orb.compute(self.image, kps)
         else:
-            # TODO: Add custom feature tracker wrapper
-            self.kps = feature_tracker.detectAndCompute(self.image)
+            self.kps, self.des = feature_tracker.detectAndCompute(self.image)
 
-        self.kps_un = camera.undistortPoints(self.kps)
-        self.kps = np.asarray(kps)
+        self.kps_un = camera.undistortPoints(_keypoints_to_corners(self.kps))
+        self.kps = np.asarray(self.kps)
         self.kps_un = np.asarray(_corners_to_keypoints(self.kps_un))
 
         #TODO: Vector of points in map corresponding to the keypoints
@@ -171,5 +169,5 @@ def _corners_to_keypoints(corners: np.ndarray) -> List:
 def _keypoints_to_corners(keypoints: List) -> np.ndarray:
     corners = []
     for kp in keypoints:
-        corners.append([kp.pt.x, kp.pt.y])
+        corners.append([kp.pt[0], kp.pt[1]])
     return np.asarray(corners)

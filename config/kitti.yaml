@@ -7,8 +7,7 @@ dataset:
 
 tracker:
   args:
-    #TODO: Replace variable with max_interest_points
-    num_interest_points: 1000 # Maximum number of interest points to return from feature detector
+    num_interest_points: 1000 # TODO: Duplicate Maximum number of interest points to return from feature detector
     min_init_interest_points: 100 # Minimum number of points required for initialization
     max_init_reproj_error: 0.05 # Maximum allowable reprojection error for initialization
     quality_level: 0.1
@@ -18,15 +17,15 @@ tracker:
 
 frame:
   args:
-    num_interest_points: 1000
+    num_interest_points: 1000 #TODO: Duplicate here
     quality_level: 0.1
     nms_radius: 2
-    
+
 feature:
   type: "ORBFeatureExtractor"
   args:
-    nfeatures: 500
-    
+    nfeatures: 1500
+
 map:
   args:
     keyframe_max_length: 5000
