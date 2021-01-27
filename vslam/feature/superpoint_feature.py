@@ -10,7 +10,8 @@ class SuperPointFeatureExtractor(FeatureExtractor):
     """
     def __init__(self, **kwargs) -> None:
         """Contructor
-            TODO: SuperPoint natively has trackers for points matched across all frames
+            Args:
+                SuperPoint initializer list as specified from config file
         """
         super().__init__()
         self.img_h = kwargs['img_h']
@@ -24,7 +25,10 @@ class SuperPointFeatureExtractor(FeatureExtractor):
                         cuda=kwargs['cuda'])
 
     def detect(self, img: np.ndarray, mask: np.ndarray = None) -> List:
-        """Wrapper class for SIFT detector
+        """Wrapper class for Superpoint detector
+            This function is NOT used, Superpoint outputs
+            keypoint and descriptor simultaneously from the network.
+
             Args:
                 Image
                 Mask
@@ -35,7 +39,9 @@ class SuperPointFeatureExtractor(FeatureExtractor):
         pass
 
     def compute(self, img: np.ndarray, kp: List) -> Tuple[List, np.ndarray]:
-        """Wrapper class for SIFT compute
+        """Wrapper class for Superpoint descriptor compute
+            This function is NOT used, Superpoint outputs
+            keypoint and descriptor simultaneously from the network.
             Args:
                 Image
 
@@ -47,13 +53,12 @@ class SuperPointFeatureExtractor(FeatureExtractor):
     def _pts_to_keypoints(self, pts : np.ndarray, orig_shape : Tuple, resized_shape : Tuple) -> List:
         """Convert Superpoint generated interest points to cv2 Keypoints
             Args:
-                TODO
+                Keypoints
+                Original image shape
+                Resized image shape
             
             Returns:
-                TODO
-
-            TODO: pts returns a third element, not yet clear what is this element
-
+                List of Keypoints approximately reprojected location on the original image
         """
         pts = pts.astype('float32').T
         # Roughly reproject keypoints to image location prior to resize
@@ -61,9 +66,8 @@ class SuperPointFeatureExtractor(FeatureExtractor):
         pts[:, 1] = pts[:, 1] / resized_shape[1] * orig_shape[1]
         kpts = [ cv2.KeyPoint(pt[0], pt[1], 1) for pt in pts]
         return kpts
-            
-    
-    def detectAndCompute(self, img: np.ndarray) -> Tuple[List, np.ndarray]:
+
+    def detectAndCompute(self, img: np.ndarray, mask : np.ndarray = None) -> Tuple[List, np.ndarray]:
         """Wrapper class for SuperPoint detectAndCompute
             Args:
                 Image
@@ -71,10 +75,10 @@ class SuperPointFeatureExtractor(FeatureExtractor):
             Returns:
                 Tuple of Keypoint and descriptors
         """
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        if len(img.shape) == 3:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         gray_img = cv2.resize(img, (self.img_w, self.img_h), interpolation=cv2.INTER_AREA)
         gray_img = (gray_img.astype('float32') / 255.)
         pts, desc, heatmap = self.fe.run(gray_img)
         kpts = self._pts_to_keypoints(pts, img.shape, (self.img_h, self.img_w))
         return kpts, desc.T
-        

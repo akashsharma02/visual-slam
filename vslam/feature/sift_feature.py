@@ -9,7 +9,8 @@ class SIFTFeatureExtractor(FeatureExtractor):
     """
     def __init__(self, **kwargs) -> None:
         """Contructor
-            TODO: add args to orb constructo
+            Args:
+                SIFT initializer list as specified from config file
         """
         super().__init__()
         self.sift = cv2.SIFT_create(**kwargs)
@@ -23,10 +24,11 @@ class SIFTFeatureExtractor(FeatureExtractor):
             Returns:
                 List of Keypoints 
         """
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        if len(img.shape) == 3:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return  self.sift.detect(img, mask=mask)
 
-    def compute(self, img: np.ndarray, kp: list) -> Tuple[list, np.ndarray]:
+    def compute(self, img: np.ndarray, kp: List) -> Tuple[List, np.ndarray]:
         """Wrapper class for SIFT compute
             Args:
                 Image
@@ -34,10 +36,11 @@ class SIFTFeatureExtractor(FeatureExtractor):
             Returns:
                 Tuple of keypoint and corresponding feature descriptor
         """
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        if len(img.shape) == 3:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return self.sift.compute(img, kp)
 
-    def detectAndCompute(self, img: np.ndarray, mask : np.ndarray = None) -> Tuple[list, np.ndarray]:
+    def detectAndCompute(self, img: np.ndarray, mask : np.ndarray = None) -> Tuple[List, np.ndarray]:
         """Wrapper class for SIFT detectAndCompute
             Args:
                 Image
@@ -46,7 +49,6 @@ class SIFTFeatureExtractor(FeatureExtractor):
             Returns:
                 Tuple of Keypoint and descriptors
         """
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        if len(img.shape) == 3:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return self.sift.detectAndCompute(img, mask = mask)
-                
-        

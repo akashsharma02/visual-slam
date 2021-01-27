@@ -5,10 +5,9 @@ import cv2
 from vslam.parser import ConfigParser, CfgNode
 from vslam import visualizer as viz
 from vslam import dataloaders
+from vslam import feature
 from vslam.types import PinholeCamera, Frame, Map
 from vslam.tracker import Tracker
-from vslam import feature
-from vslam import feature
 
 def main(config):
     """TODO: Docstring for main.

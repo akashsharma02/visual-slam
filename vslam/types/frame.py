@@ -54,8 +54,7 @@ class Frame(object):
             kps, self.des = orb.compute(self.image, kps)
         else:
             # TODO: Add custom feature tracker wrapper
-            self.kps = feature_tracker.detectAndCompute(
-                self.image, self.config.num_interest_points)
+            self.kps = feature_tracker.detectAndCompute(self.image)
 
         self.kps_un = camera.undistortPoints(self.kps)
         self.kps = np.asarray(kps)
