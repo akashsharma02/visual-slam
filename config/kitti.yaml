@@ -22,6 +22,7 @@ frame:
     num_interest_points: 1000
     quality_level: 0.1
     nms_radius: 2
+    
 map:
   args:
     keyframe_max_length: 5000

@@ -7,14 +7,9 @@ import time
 import matplotlib.pyplot as plt
 import gtsam
 
-<<<<<<< HEAD
-from vslam.types.camera import PinholeCamera
-from vslam.feature.feature import FeatureExtractor
-=======
 from vslam.types import PinholeCamera, Frame, Map
 from vslam.parser import CfgNode
 
->>>>>>> tracker
 
 class Tracker:
     """
@@ -28,22 +23,12 @@ class Tracker:
         RUNNING = 2
         LOST = 3
 
-<<<<<<< HEAD
-    def __init__(self, config: Dict, camera: PinholeCamera = None, feature: FeatureExtractor = None) -> None:
-=======
     def __init__(self, config: CfgNode, map_config: CfgNode, camera: PinholeCamera = None) -> None:
->>>>>>> tracker
         self.config = config
         self.map_config = map_config
         self.camera = camera
-<<<<<<< HEAD
-        self.state  = self.State.NOT_INITIALIZED
-        self.prev_image = None
-        self.feature = feature
-=======
         self.state = self.State.NOT_INITIALIZED
         self.initial_frame = None
->>>>>>> tracker
 
     def track(self, curr_frame: Frame, slam_map: Optional[Map]=None) -> None:
         """

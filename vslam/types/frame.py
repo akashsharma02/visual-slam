@@ -6,7 +6,7 @@ import gtsam
 
 from vslam.parser import CfgNode
 from vslam.types import PinholeCamera
-
+from vslam.feature import FeatureExtractor
 
 class Frame(object):
 
@@ -17,7 +17,7 @@ class Frame(object):
                  timestamp: int,
                  config: CfgNode,
                  camera: PinholeCamera,
-                 feature_tracker = None, # Will change to FeatureExtractor @Ruoyang
+                 feature_tracker : FeatureExtractor = None,
                  pose: Optional[gtsam.Pose3] = None) -> None:
 
         _, _, c = image.shape

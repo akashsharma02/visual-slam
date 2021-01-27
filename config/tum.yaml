@@ -13,5 +13,29 @@ tracker:
         nms_radius: 2       #TODO: Non maximal suppression radius, check whether this is in pixels
         reproj_threshold: 3 #Minimum Reprojection error to regard as outlier during RANSAC
         confidence: 0.99    #Require 99% confidence for Fundamental matrix estimation
+        min_init_interest_points: 100
+        max_init_reproj_error: 0.05
 
+feature: 
+    type: "SuperPointFeatureExtractor"
+    args:
+        weights_path: "/home/alex/GitHub_dev/visual-slam/thirdparty/SuperPointPretrainedNetwork/superpoint_v1.pth"
+        img_h: 120
+        img_w: 160
+        nms_dist: 4
+        conf_thresh:  0.015
+        nn_thresh: 0.7
+        cuda: False
+
+frame: 
+    args:
+        num_interest_points: 1000
+        quality_level: 0.1
+        nms_radius:  2
+
+save_dir: "logs/"
+
+map:
+  args:
+    keyframe_max_length: 5000
 save_dir: "logs/"

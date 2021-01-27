@@ -1,3 +1,3 @@
-[submodule "vslam/feature/SuperPointPretrainedNetwork"]
-	path = vslam/feature/SuperPointPretrainedNetwork
+[submodule "thirdparty/SuperPointPretrainedNetwork"]
+	path = thirdparty/SuperPointPretrainedNetwork
 	url = https://github.com/magicleap/SuperPointPretrainedNetwork
